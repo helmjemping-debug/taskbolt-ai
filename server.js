@@ -5,7 +5,6 @@ const Groq = require('groq-sdk');
 const app = express();
 app.use(express.json());
 
-// Inisialisasi Groq SDK menggunakan GROQ_API_KEY
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 app.get('/', (req, res) => {
@@ -24,8 +23,8 @@ app.get('/api/chat', async (req, res) => {
 
         res.json({ reply: chatCompletion.choices[0]?.message?.content || "Tidak ada respon." });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ reply: "Gagal terhubung ke Groq API. Pastikan GROQ_API_KEY di Vercel sudah benar." });
+        console.error("GROQ ERROR:", error);
+        res.status(500).json({ reply: `Error Detail: ${error.message}` });
     }
 });
 
