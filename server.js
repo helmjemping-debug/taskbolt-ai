@@ -1,11 +1,15 @@
 const express = require('express');
 const path = require('path');
-const Groq = require('groq-sdk');
+const OpenAI = require('openai');
 
 const app = express();
 app.use(express.json());
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+// Menggunakan OpenAI SDK yang dihubungkan ke OpenRouter
+const openai = new OpenAI({
+    baseURL: "https://openrouter.ai/api/v1",
+    apiKey: process.env.OPENROUTER_API_KEY,
+});
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
@@ -16,14 +20,14 @@ app.get('/api/chat', async (req, res) => {
     if (!userText) return res.json({ reply: "Pesan tidak boleh kosong." });
 
     try {
-        const chatCompletion = await groq.chat.completions.create({
-            messages: [{ role: 'user', content: userText }],
-            model: 'llama-3.1-8b-instant',
+        const completion = await openai.chat.completions.create({
+            model: "meta-llama/llama-3.3-70b-instruct:free",
+            messages: [{ role: "user", content: userText }],
         });
 
-        res.json({ reply: chatCompletion.choices[0]?.message?.content || "Tidak ada respon." });
+        res.json({ reply: completion.choices[0]?.message?.content || "Tidak ada respon." });
     } catch (error) {
-        console.error("GROQ ERROR:", error);
+        console.error("OPENROUTER ERROR:", error);
         res.status(500).json({ reply: `Error Detail: ${error.message}` });
     }
 });
