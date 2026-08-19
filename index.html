@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskBolt AI</title>
+    <style>
+        body { font-family: sans-serif; background: #121212; color: white; display: flex; flex-direction: column; height: 97vh; margin: 0; padding: 10px; }
+        #chatbox { flex: 1; overflow-y: auto; border: 1px solid #333; padding: 10px; margin-bottom: 10px; border-radius: 8px; }
+        .user { color: #4da6ff; margin: 5px 0; }
+        .bot { color: #00ff88; margin: 5px 0; }
+        .input-group { display: flex; gap: 5px; }
+        input { flex: 1; padding: 10px; border-radius: 5px; border: none; outline: none; }
+        button { padding: 10px 15px; border-radius: 5px; border: none; background: #00ff88; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>TaskBolt AI</h2>
+    <div id="chatbox"></div>
+    <div class="input-group">
+        <input type="text" id="userInput" placeholder="Ketik pesan...">
+        <button onclick="sendMessage()">Kirim</button>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const chatbox = document.getElementById('chatbox');
+            if(!input.value) return;
+
+            const text = input.value;
+            chatbox.innerHTML += `<div class="user"><b>Anda:</b> ${text}</div>`;
+            input.value = '';
+
+            try {
+                const res = await fetch(`/api/chat?text=${encodeURIComponent(text)}`);
+                const data = await res.json();
+                chatbox.innerHTML += `<div class="bot"><b>AI:</b> ${data.reply || data.message || JSON.stringify(data)}</div>`;
+            } catch(e) {
+                chatbox.innerHTML += `<div class="bot" style="color:red">Error menghubungi server.</div>`;
+            }
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
