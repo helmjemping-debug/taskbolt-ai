@@ -5,7 +5,6 @@ const OpenAI = require('openai');
 const app = express();
 app.use(express.json());
 
-// Menggunakan OpenAI SDK yang dihubungkan ke OpenRouter
 const openai = new OpenAI({
     baseURL: "https://openrouter.ai/api/v1",
     apiKey: process.env.OPENROUTER_API_KEY,
@@ -21,7 +20,7 @@ app.get('/api/chat', async (req, res) => {
 
     try {
         const completion = await openai.chat.completions.create({
-            model: "meta-llama/llama-3.3-70b-instruct:free",
+            model: "qwen/qwen-2.5-7b-instruct:free",
             messages: [{ role: "user", content: userText }],
         });
 
